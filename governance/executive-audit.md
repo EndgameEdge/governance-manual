@@ -183,7 +183,7 @@ Ensure that the spell's expiry matches previous spells, includes the DssActions 
 Ensure that DssExecLib calls out to the changelog with the correct name descriptors. (These used to be spell addresses, but have since been replaced with name descriptors for error reduction.) It is therefore good practice to review the changelog to ensure that the correct name descriptor has been referenced as part of the on-chain action.
 
 ### Review oracle addresses
-Occasionally, there are spells involving Oracles - generally adding addresses to the whitelist, and occasionally adding a new oracle. These addresses must also be carefully verified. To do so it is necessary to go to the [Changelog](https://changelog.makerdao.com/) and look for e.g. `PIP_ETH`. Taking the contract to Etherscan and opening the contract `read` tab will display the `src` (listed as number 7 currently). The contract address listed there can be verified to match the `MedianETHUSDcontract` that is in the spell.
+Occasionally, there are spells involving Oracles - generally adding addresses to the whitelist, and occasionally adding a new oracle. These addresses must also be carefully verified. To do so it is necessary to go to the [Chainlog](https://chainlog.makerdao.com/) and look for e.g. `PIP_ETH`. Taking the contract to Etherscan and opening the contract `read` tab will display the `src` (listed as number 7 currently). The contract address listed there can be verified to match the `MedianETHUSDcontract` that is in the spell.
 
 
 ### Review rate changes
