@@ -226,6 +226,19 @@ function setIlkStabilityFee(bytes32 _ilk, uint256 _rate, bool _doDrip) public {
 ### All SpellAction contract variables must be declared 'constant'
 SpellActions must never have anything in contract memory. Therefore, all contract variables must be declared as constant. This is because at execution time, the contract's variables will be that of the DSPauseProxy. If there are variables in this section that are anything other than constant then it is a significant bug and must not be approved.
 
+### Validate no suspicious keywords
+Usage of any of the following keywords is a red flag that requires additional scrutiny to validate the safety of the spell: `tx.origin`, `assembly`[^1], `delegatecall`, `callcode`, `receive`
+
+[^1]: It is expected when computing `extcodehash` as follows: `assembly { _tag := extcodehash(_action) }`
+
+### Validate non-CREATE2 contract deployment
+
+The `CREATE2` opcode should not be used to deploy the spell contract. This opcode enables metamorphic contracts, and dark spells, where the executed spell code is changed after the spell has been approved, but before it has been cast.
+
+You can validate that the spell was not deployed using `CREATE2` by looking at ethscan and clicking on the `createtxn` transaction. If the `To` field displays as "[0x... Created]" then it was not created using `CREATE2`. For example, see [this](https://etherscan.io/tx/0xc90fb0bd8979e8cbedf5879d736fe2f933103e18b152eb96f1db47a91b23fa23) transaction.
+For example of a `CREATE2` transaction see [this](https://etherscan.io/tx/0x1888125e44400ae7d8bb074f65e88d6a3f060f7ccc6c38a6f4bc730c98f0ed33). Note the `To` field format, and click "Internal Txns" to see `create2_0_1_1`.
+
+
 >Page last reviewed: -  
 >Next review due: -  
 
