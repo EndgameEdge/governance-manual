@@ -212,6 +212,8 @@ This produces 1.000000002877801985002875644. Removing the decimal place will all
 Validating all rate adjustments can be done the same way. For more information on the rates module, please visit the [developer guide](https://github.com/makerdao/developerguides/blob/master/mcd/intro-rate-mechanism/intro-rate-mechanism.md). For easy reference, common pre-computed rates can also be viewed at the following [ipfs link](
 https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW).
 
+Rate unit constants (e.g., WAD, RAD RAY) should also be validated. These constants are always defined the same, and can be validated by referencing the spell archive. The correct usage of these units and denominations can be determined by looking at the function argument names, or by referencing the same previous usage from the spell archive.
+
 ### Review DssExecLib to ensure Drip is called before rates are changed
 Immediately prior to making rate changes, `drip` must be called on the respective contracts. For example, if a DSR rate change is being made, `drip` is called on the `pot` or if the stability fee is being changed on a collateral type, it is necessary to call `drip("ILK")` on the `jug`. Despite `drip` being abstracted to the DssExecLib, it can still be confirmed in the library as part of the prior libary checks.
 
