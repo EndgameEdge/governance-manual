@@ -179,7 +179,7 @@ If this function is missing from the Spell Action, the code will fall back to th
 function officeHours() public virtual returns (bool) {
     return true;
 ```
-Such a value is `true` when new changes may impact integrators or auction keepers, and is otherwise `false` when office hours are not applied - meaning the spell can be cast at anypoint once successfully voted in. The code determining these rules has also been [abstracted](https://etherscan.io/address/0xfD88CeE74f7D78697775aBDAE53f9Da1559728E4#code#L335) away into the ExecLib.
+Such a value is `true` when new changes may impact integrators or auction keepers, and is otherwise `false` when office hours are not applied - meaning the spell can be cast at any point once successfully voted in. The code determining these rules has also been [abstracted](https://etherscan.io/address/0xfD88CeE74f7D78697775aBDAE53f9Da1559728E4#code#L335) away into the ExecLib.
 
 ## Non-Exhaustive Checklist
 
@@ -192,8 +192,11 @@ Create a hash of the github/frontend copy and reference this against the hash in
 ### Verify the constructor is as expected
 Ensure that the spell's expiry matches previous spells, includes the DssActions code block and that schedule and cast functions exist in DssExecLib. If the Constructor does not match previous functions, there should be an explanation as to why.
 
-### Review the changelog
-Ensure that DssExecLib calls out to the changelog with the correct name descriptors. (These used to be spell addresses, but have since been replaced with name descriptors for error reduction.) It is therefore good practice to review the changelog to ensure that the correct name descriptor has been referenced as part of the on-chain action.
+### Review the chainlog
+Ensure that DssExecLib calls out to the chainlog with the correct name descriptors. (These used to be spell addresses, but have since been replaced with name descriptors for error reduction.) It is therefore good practice to review the chainlog to ensure that the correct name descriptor has been referenced as part of the on-chain action. The spell action should lookup the constant using the
+chainlog whenever it is available on the chainlog.
+
+If a constant is updated in the chainlog, then verify that the chainlog patch version is updated to reflect this change (e.g., from 1.17.6 -> 1.17.7). If a new constant is added to the chainlog, then verify that the major version is updated.
 
 ### Review oracle addresses
 Occasionally, there are spells involving Oracles - generally adding addresses to the whitelist, and occasionally adding a new oracle. These addresses must also be carefully verified. To do so it is necessary to go to the [Chainlog](https://chainlog.makerdao.com/) and look for e.g. `PIP_ETH`. Taking the contract to Etherscan and opening the contract `read` tab will display the `src` (listed as number 7 currently). The contract address listed there can be verified to match the `MedianETHUSDcontract` that is in the spell.
