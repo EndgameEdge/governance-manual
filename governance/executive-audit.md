@@ -51,19 +51,32 @@ In the above example, the comparison is between this [Github file](https://githu
 
 ### Validating Governance Copy
 
-To ensure that the various actors (including governance facilitators, and smart contract developers) are aligned, the body of the spell includes a hash of the github copy that appears on the governance portal. This hash is included in the spell to confirm that the smart contract developers building the spell have referenced the correct copy being voted on. The hash appears in the spell in this manner:
+To ensure that the various actors (including governance facilitators, and smart contract developers) are aligned, the body of the spell includes a hash of the github copy that appears on the governance portal, but without the deployed
+contract address. This hash is included in the spell to confirm that the smart contract developers building the spell have referenced the correct copy being voted on. The hash appears in the spell in this manner:
 
 ```
 "2021-09-24 MakerDAO Executive Spell | Hash: 0x655e71cb00b63a11c14db615d43d3e59202ff9d2b2bc6a6a03de42e258bd1be8";
 ````
 
-To validate that the governance portal copy on vote.makerdao.com which is reflected on [Github](https://github.com/makerdao/community/tree/master/governance/votes) has the same hash as is stored in the executive spell, the user can copy and paste the body of the gituhub text into this online [Github tool](https://emn178.github.io/online-tools/keccak_256.html) to generate and match the hash.
+To validate that the governance portal copy on vote.makerdao.com which is reflected on [Github](https://github.com/makerdao/community/tree/master/governance/votes) has the same hash as is stored in the executive spell, the user can copy and paste the body of the github text into this online [Github tool](https://emn178.github.io/online-tools/keccak_256.html) to generate and match the hash.
+Make sure to replace the contract address field with the hard coded string
+`$spell_address`, for example:
+```diff
+5c5
+< address: "0x70254BD530684CF4a6323F51098FA39AAE6130b6"
+---
+> address: "$spell_address"
+```
 
 Alternatively, the user can generate this hash run the following seth command:
 
 ```
 seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/f33870a7938c1842e8467226f8007a2d47f9ddeb/governance/votes/Executive%20vote%20-%20October%208%2C%202021.md -q -O - 2>/dev/null)"
 ```
+
+Where the referenced commit has the executive document with the `$spell_address`
+template variable (not replaced with the contract address).
+
 If the hash does not match, it would be prudent to question the spell contents and the copy that was referenced or changed.
 
 ## Anatomy of an Executive
