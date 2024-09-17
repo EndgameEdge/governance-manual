@@ -14,9 +14,11 @@ This document contains four main sections:
 
 The key approach when reviewing an executive spell is that if any part of an executive spell seems suspicious or confusing in any way it is always better to double check before voting. Even if you are mistaken in your concerns, this informs us to add more detail to this document to prevent someone becoming confused in the same way in the future.
 
+In general, the scope of the executive audit is limited to actions that are executed within the context of the `DSPauseProxy` contract, and does not extend to contracts that are outside this context including CRON jobs or SubDAO spells.
+
 ## Finding the Contract Code
 
-The link to the spell on etherscan can be found on the voting portal in the 'Proposal details' pane. Look for the `Spell Address` property:
+The link to the spell on Etherscan can be found on the voting portal in the 'Proposal details' pane. Look for the `Spell Address` property:
 
 ![](https://i.imgur.com/qdAfqZM.png)
 
@@ -30,7 +32,7 @@ Beyond looking in the [Governance Portal](www.vote.makerdao.com), current and pa
 
 ## Validating Spell Code
 
-Validate that the on-chain Etherscan code matches the corresponding [archive code](https://github.com/makerdao/spells-mainnet/tree/master/archive) or the most [recent executive](https://github.com/makerdao/spells-mainnet/tree/master/src) in Github.  If it is not possible to locate the most recent spell, it may be because this has not been merged to the master branch before it goes live, in which case changes can be found in the pending [pull requests](https://github.com/makerdao/spells-mainnet/pulls). 
+Validate that the on-chain Etherscan code matches the corresponding [archive code](https://github.com/makerdao/spells-mainnet/tree/master/archive) or the most [recent executive](https://github.com/makerdao/spells-mainnet/tree/master/src) in Github.  If it is not possible to locate the most recent spell, it may be because this has not been merged to the master branch before it goes live, in which case changes can be found in the pending [pull requests](https://github.com/makerdao/spells-mainnet/pulls). The branch name should be the scheduled date of the execute vote (e.g., `2024-09-13`).
 
 To do this code comparison, use a program called [Diff Checker](https://www.diffchecker.com/) to compare the Etherscan spell code against the relevant Github code. Clicking `find difference` will illustrate any differences between the two.
 
@@ -48,6 +50,9 @@ This means that it is the DssExecLib [library](https://github.com/makerdao/spell
 ![](https://i.imgur.com/AaG6YDc.png)
 
 In the above example, the comparison is between this [Github file](https://github.com/makerdao/spells-mainnet/blob/master/archive/2021-09-24-DssSpell.sol) against the corresponding [Etherscan contract code](https://etherscan.io/address/0x0ed5a04DdE29f90bB00529608D3f17C1ffF778A0#code). 
+
+### Validate the tests pass
+Validate that all of the forge tests pass on the spell's respective branch (see above discussion for determining the spell's branch). You can execute the tests using the command: `make test`.
 
 ### Validating Governance Copy
 
@@ -83,9 +88,11 @@ If the hash does not match, it would be prudent to question the spell contents a
 An executive spell is broken into a number of different parts, including; spell libraries, spell actions, and constructors, which will be reviewed below.
 
 ### Spell Library
-MakerDAO's executive spells have evolved over time towards using libraries in an effort to automate the process of making repetetive updates and changes to protocol parameters. Libraries reduce the chance of errors by reusing or building upon prior tested and verified code.
+MakerDAO's executive spells have evolved over time towards using libraries in an effort to automate the process of making repetitive updates and changes to protocol parameters. Libraries reduce the chance of errors by reusing or building upon prior tested and verified code.
 
 In auditing the executive it is first necessary to check that the spell uses the dss-exec-lib library and secondly, that the library is the official and legitimate library. This can be confirmed by looking at the spell copy in Etherscan.
+
+Presently, this library version is `v0.0.9` deployed at address `0x8de6ddbcd5053d32292aaa0d2105a32d108484a6`.
 
 The user can confirm that the executive is using the `dss-exec-lib` ,  by identifying the entry point for DssSpell is DssExec at the bottom of the contract code:
 
@@ -212,7 +219,7 @@ This produces 1.000000002877801985002875644. Removing the decimal place will all
 Validating all rate adjustments can be done the same way. For more information on the rates module, please visit the [developer guide](https://github.com/makerdao/developerguides/blob/master/mcd/intro-rate-mechanism/intro-rate-mechanism.md). For easy reference, common pre-computed rates can also be viewed at the following [ipfs link](
 https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW).
 
-Rate unit constants (e.g., WAD, RAD RAY) should also be validated. These constants are always defined the same, and can be validated by referencing the spell archive. The correct usage of these units and denominations can be determined by looking at the function argument names, or by referencing the same previous usage from the spell archive.
+Rate unit constants (e.g., `MILLION`, `WAD`, `RAD`, `RAY`) should be validated. These constants are always defined the same, and can be validated by referencing the spell archive. The correct usage of these units and denominations can be determined by looking at the function argument names, or by referencing the same previous usage from the spell archive.
 
 ### Review DssExecLib to ensure Drip is called before rates are changed
 Immediately prior to making rate changes, `drip` must be called on the respective contracts. For example, if a DSR rate change is being made, `drip` is called on the `pot` or if the stability fee is being changed on a collateral type, it is necessary to call `drip("ILK")` on the `jug`. Despite `drip` being abstracted to the DssExecLib, it can still be confirmed in the library as part of the prior libary checks.
@@ -232,12 +239,32 @@ Usage of any of the following keywords is a red flag that requires additional sc
 [^1]: It is expected when computing `extcodehash` as follows: `assembly { _tag := extcodehash(_action) }`
 
 ### Validate non-CREATE2 contract deployment
-
 The `CREATE2` opcode should not be used to deploy the spell contract. This opcode enables metamorphic contracts, and dark spells, where the executed spell code is changed after the spell has been approved, but before it has been cast.
 
 You can validate that the spell was not deployed using `CREATE2` by looking at ethscan and clicking on the `createtxn` transaction. If the `To` field displays as "[0x... Created]" then it was not created using `CREATE2`. For example, see [this](https://etherscan.io/tx/0xc90fb0bd8979e8cbedf5879d736fe2f933103e18b152eb96f1db47a91b23fa23) transaction.
 For example of a `CREATE2` transaction see [this](https://etherscan.io/tx/0x1888125e44400ae7d8bb074f65e88d6a3f060f7ccc6c38a6f4bc730c98f0ed33). Note the `To` field format, and click "Internal Txns" to see `create2_0_1_1`.
 
+### Validate compiler optimizations
+The solidity compiler optimizations should be `No with 200 runs`. You can view this on Etherscan under "Contract > Optimizations Enabled". This is to avoid solidity compiler exploits which can be triggered using only a specific number of runs. The only exception to this rule is for very large spells the contract size may be prohibitive and require optimizations to be enabled. In this case, the choice of the number of runs should be an expected value such as `1` or `100`.
+
+### Validate the EVM version and license file
+The solidity compiler settings should be `default evmVersion`. You can view this on Etherscan under "Contract > Other Settings." If this is not the case, there should be an explanation as to why.
+
+The license file should be `GNU AGPLv3`, which is displayed under the same section on Etherscan.
+
+### Validate the solc compiler version matches `spells-mainnet`
+The compiler version for the deployed spell should match the version specified on that spell's branch in the `spells-mainnet` repo. This is defined at the top of the `Makefile` under `--use solc:0.8.16 build`. The commit hash in the version does not need to be validated.
+
+### Spell actions validations and provenance
+Validate that each line of code in the `actions()` implementation corresponds to action in action in executive document, and vice versa. In other words, there should not be action code that does not directly correspond to an action listed in the executive document, and there should not be an action listed in the executive document that does not correspond to solidity code.
+
+For each in-scope action in the executive document:
+* Validate the provenance in executive document. For example, there should be a referenced forum post and vote approval post, both of which articulate the exact parameters described in the Executive Document action. External documents such as PDFs stored on IPFS should also be validated to substantiate the action.
+* Validate the action corresponds to line(s) in `actions()` implementation with the same parameters, constants, and denominations as those in executive document. This includes validating called helper functions called from within `actions()` line.
+* Validate the lines of code in `actions()` provides associated code comments with link to same provenance listed in executive document (e.g., forum post and vote poll).
+
+### Spells should not revert
+Spells should not revert under normal conditions. A revert is triggered using the keyword `assert`, `require`, or `revert`. A spell may call these functions to perform "sanity" checks which abort the transaction in rare circumstances where the contract is not behaving as expected (e.g., a negative percentage which should always be positive). However, under normal conditions, these checks should not be triggered unless there is a justification as to why (e.g., extra checks to prevent a legitimate flash loan scenario).
 
 >Page last reviewed: -  
 >Next review due: -  
