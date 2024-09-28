@@ -79,7 +79,7 @@ Alternatively, the user can generate this hash run the following seth command:
 seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/f33870a7938c1842e8467226f8007a2d47f9ddeb/governance/votes/Executive%20vote%20-%20October%208%2C%202021.md -q -O - 2>/dev/null)"
 ```
 
-Where the referenced commit has the executive document with the `$spell_address`
+Where the URL references the commit that contains the executive document with the $spell_address template variable (which has not yet been replaced with the contract address).
 template variable (not replaced with the contract address).
 
 If the hash does not match, it would be prudent to question the spell contents and the copy that was referenced or changed.
