@@ -80,7 +80,6 @@ seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/f338
 ```
 
 Where the URL references the commit that contains the executive document with the $spell_address template variable (which has not yet been replaced with the contract address).
-template variable (not replaced with the contract address).
 
 If the hash does not match, it would be prudent to question the spell contents and the copy that was referenced or changed.
 
