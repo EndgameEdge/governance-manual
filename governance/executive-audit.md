@@ -91,7 +91,7 @@ MakerDAO's executive spells have evolved over time towards using libraries in an
 
 In auditing the executive it is first necessary to check that the spell uses the dss-exec-lib library and secondly, that the library is the official and legitimate library. This can be confirmed by looking at the spell copy in Etherscan.
 
-Presently, this library version is `v0.0.9` deployed at address `0x8de6ddbcd5053d32292aaa0d2105a32d108484a6`.
+Up until the last revision of this document, this library version is `v0.0.9` deployed at address `0x8de6ddbcd5053d32292aaa0d2105a32d108484a6`. It is possible to verify this from the [dss-exec-lib repository](https://github.com/makerdao/dss-exec-lib).```
 
 The user can confirm that the executive is using the `dss-exec-lib` ,  by identifying the entry point for DssSpell is DssExec at the bottom of the contract code:
 
