@@ -52,7 +52,7 @@ This means that it is the DssExecLib [library](https://github.com/makerdao/spell
 In the above example, the comparison is between this [Github file](https://github.com/makerdao/spells-mainnet/blob/master/archive/2021-09-24-DssSpell.sol) against the corresponding [Etherscan contract code](https://etherscan.io/address/0x0ed5a04DdE29f90bB00529608D3f17C1ffF778A0#code). 
 
 ### Validate the tests pass
-Validate that all of the forge tests pass on the spell's respective branch (see above discussion for determining the spell's branch). You can execute the tests using the command: `make test`.
+Validate that all of the forge tests pass on the spell's respective branch (see above discussion for determining the spell's branch). You can execute the tests by setting up a local environment, using dappTools, and running the command: `make test`.
 
 ### Validating Governance Copy
 
