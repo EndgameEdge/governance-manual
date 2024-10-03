@@ -174,8 +174,12 @@ function actions() public override {
 
 }
 ```
+Validate that each line of code in the `actions()` implementation corresponds to action in action in executive document, and vice versa. In other words, there should not be action code that does not directly correspond to an action listed in the executive document, and there should not be an action listed in the executive document that does not correspond to solidity code.
 
-
+For each in-scope action in the executive document:
+* Validate the provenance in executive document. For example, there should be a referenced forum post and vote approval post, both of which articulate the exact parameters described in the Executive Document action. External documents such as PDFs stored on IPFS should also be validated to substantiate the action.
+* Validate the action corresponds to line(s) in `actions()` implementation with the same parameters, constants, and denominations as those in executive document. This includes validating called helper functions called from within `actions()` line.
+* Validate the lines of code in `actions()` provides associated code comments with link to same provenance listed in executive document (e.g., forum post and vote poll).
 
 ### Office Hours
 The office hours function determines whether or not the spell, once voted in, is limited to being scheduled between 10:00 - 16:00 EST weekdays. Setting the value to true/false specifically enumerates whether it is applied or not. 
@@ -253,14 +257,6 @@ The license file should be `GNU AGPLv3`, which is displayed under the same secti
 
 ### Validate the solc compiler version matches `spells-mainnet`
 The compiler version for the deployed spell should match the version specified on that spell's branch in the `spells-mainnet` repo. This is defined at the top of the `Makefile` under `--use solc:0.8.16 build`. The commit hash in the version does not need to be validated.
-
-### Spell actions validations and provenance
-Validate that each line of code in the `actions()` implementation corresponds to action in action in executive document, and vice versa. In other words, there should not be action code that does not directly correspond to an action listed in the executive document, and there should not be an action listed in the executive document that does not correspond to solidity code.
-
-For each in-scope action in the executive document:
-* Validate the provenance in executive document. For example, there should be a referenced forum post and vote approval post, both of which articulate the exact parameters described in the Executive Document action. External documents such as PDFs stored on IPFS should also be validated to substantiate the action.
-* Validate the action corresponds to line(s) in `actions()` implementation with the same parameters, constants, and denominations as those in executive document. This includes validating called helper functions called from within `actions()` line.
-* Validate the lines of code in `actions()` provides associated code comments with link to same provenance listed in executive document (e.g., forum post and vote poll).
 
 ### Spells should not revert
 Spells should not revert under normal conditions. A revert is triggered using the keyword `assert`, `require`, or `revert`. A spell may call these functions to perform "sanity" checks which abort the transaction in rare circumstances where the contract is not behaving as expected (e.g., a negative percentage which should always be positive). However, under normal conditions, these checks should not be triggered unless there is a justification as to why (e.g., extra checks to prevent a legitimate flash loan scenario).
